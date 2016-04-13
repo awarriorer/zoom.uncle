@@ -37,7 +37,6 @@
     		slideActiveClass:'zoomUncle-slide-active',//激活状态
     		slideNextClass: 'zoomUncle-slide-next',//上一个
             slidePrevClass: 'zoomUncle-slide-prev',//下一个
-
     	};
     	//defaults end!
 
@@ -165,7 +164,6 @@
         var u = this.u,
             Dom = u.dom,
             Val = u.val;
-
 
         event.preventDefault();
         
@@ -508,8 +506,6 @@
                 });
             })($popImg.eq(i))
         }
-
-        console.log('layout');
     }
 
     //移除所有事件

@@ -31,8 +31,8 @@ var baseUrl       = "/",//设置基础路径
     htmlSrc       = "src/",//压缩html的路径
     htmlDestSrc   = "src/htmlMin/",//html压缩到
     //js  
-    oneJsSrc      = ["src/script/*.js","!src/**/*.min.js"],//单个js压缩的路径
-    onejsDest     = "src/script/",//单个js压缩的输出路径
+    oneJsSrc      = ["src/js/*.js","!src/**/*.min.js"],//单个js压缩的路径
+    onejsDest     = "dist/js/",//单个js压缩的输出路径
     jsConcatSrc   = ["src/script/*.js","!src/**/*.min.js"],//js压缩合并的路径
     jsConDestSrc  = "src/script/",
     jsConcatName  = "objMain",//js合并后的名称
@@ -47,7 +47,7 @@ var baseUrl       = "/",//设置基础路径
     sassDestSrc   = "src/style/",//由sass生成的css路径
     //css
     cssOneSrc     = "src/style/",//单个css路径
-    cssoneDestSrc = "src/style/",//单个css压缩到路径
+    cssoneDestSrc = "dist/style/",//单个css压缩到路径
     cssCancatSrc  = ["src/style/*.css","!src/**/*.min.css"],//要合并的css
     cssCanDestSrc = "src/style/",//要合并的css输出的路径
     cssCancatName = "main",//合并后css的名称
@@ -163,7 +163,7 @@ gulp.task("cssConcat",function(){
 gulp.task('watch', function() {
   livereload.listen(); //要在这里调用listen()方法
   //监听这些路径，执行这些方法
-  gulp.watch([lessSrc+'*.less',sassSrc+'*.scss'], ['less','sass']);
+  gulp.watch([lessSrc+'*.less',sassSrc+'*.scss','src/js/'+'*.js',cssOneSrc+'*.css'], ['less','sass','jsMinOne','cssMinOne']);
 
 });
 
