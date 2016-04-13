@@ -1,0 +1,28 @@
+@mixin WH100{
+	width: 100%;
+	height: 100%;
+}
+
+.zoomUncle-container{
+	@include WH100;
+	position: relative;
+	background-color: #000;
+	overflow: hidden;
+	.zoomUncle-wrapper{
+		@include WH100;
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+
+	.zoomUncle-slide{
+		@include WH100;
+		float: left;
+		position: relative;
+		> img{
+			width: 100%;
+			position: absolute;
+		}
+	}
+}
+

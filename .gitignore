@@ -1,0 +1,4 @@
+
+#忽略需要上传的文件
+node_modules
+.sass-cache
