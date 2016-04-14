@@ -5,7 +5,7 @@
 	
 	github:
 
-	最后更新：2016/4/8
+	最后更新：2016/4/14
 
 	功能介绍：
 	移动端图片查看器，手势放大缩小
@@ -15,11 +15,9 @@
 ;(function(){
 	'use strict';
 	var $;
-
 	/*===========================
     zoom.uncle
     ===========================*/
-
     var zoomUncle = function(container, params){
     	if (!(this instanceof zoomUncle)) return new zoomUncle(container, params);
     	//设置默认参数
@@ -37,6 +35,7 @@
     		slideActiveClass:'zoomUncle-slide-active',//激活状态
     		slideNextClass: 'zoomUncle-slide-next',//上一个
             slidePrevClass: 'zoomUncle-slide-prev',//下一个
+
     	};
     	//defaults end!
 
@@ -198,13 +197,13 @@
 
         //如果是一个指头，且现在的宽度大于屏幕宽度，那么执行拖拽
         if ( touchs.length == 1 && nowImgW > Val.containerW ) {
-            
+
             //当前的偏移量
             Val.nowImgLeft = parseInt(Dom.$nowImg.css('left'));
             Val.nowImgTop  = parseInt(Dom.$nowImg.css('top'));
             //计算Top的最大值和最小值
-            Dom.maxDragTop = Val.containerW > nowImgH ? (Val.containerW - nowImgH - u.params.dragPadding ) : u.params.dragPadding;
-            Dom.minDragTop = Val.containerW > nowImgH ? u.params.dragPadding : (Val.containerW - nowImgH - u.params.dragPadding);
+            Val.maxDragTop = Val.containerH > nowImgH ? (Val.containerH - nowImgH - u.params.dragPadding ) : u.params.dragPadding;
+            Val.minDragTop = Val.containerH > nowImgH ? u.params.dragPadding : (Val.containerH - nowImgH - u.params.dragPadding);
 
             //添加事件
             this.addEventListener('touchmove',u.imgDragMove,false);
@@ -231,7 +230,6 @@
             this.addEventListener('touchend',u.imgScaleEnd,false);
 
         }
-
     }
 
     //单指翻页事件
@@ -355,8 +353,8 @@
             moveT = dragEndY - Val.endAY + Val.nowImgTop;
 
         //给移动的值限定区间 
-        moveL = moveL > Val.dragPadding ? Val.dragPadding : moveL;
-        moveL = moveL < (Val.containerW - Dom.$nowImg.width() - Val.dragPadding) ? (Val.containerW - Dom.$nowImg.width() - Val.dragPadding) : moveL;
+        moveL = moveL > u.params.dragPadding ? u.params.dragPadding : moveL;
+        moveL = moveL < (Val.containerW - Dom.$nowImg.width() - u.params.dragPadding) ? (Val.containerW - Dom.$nowImg.width() - u.params.dragPadding) : moveL;
         moveT = moveT > Val.maxDragTop ? Val.maxDragTop : moveT;
         moveT = moveT < Val.minDragTop ? Val.minDragTop : moveT;
 
@@ -366,12 +364,13 @@
             'transition':'all 0'
         });
 
-        if ( Val.dragMaxL && moveL == Val.dragPadding ) {//左边
+
+        if ( Val.dragMaxL && moveL == u.params.dragPadding ) {//左边
             //转移事件
             u.changeEvent();
         }
 
-        if ( Val.dragMaxR && parseInt(o.$nowImg.css('left')) == (Val.containerW - Dom.$nowImg.width() - Val.dragPadding) ) {//左边
+        if ( Val.dragMaxR && parseInt(moveL) == (Val.containerW - Dom.$nowImg.width() - u.params.dragPadding) ) {//左边
             //转移事件
             u.changeEvent();
         }
@@ -386,18 +385,16 @@
         var nowLeft = parseInt(Dom.$nowImg.css('left'));
 
         //判断当前的状态是否是拖动到了边缘，如果是拖到了边缘，那么执行上一张或者下一张
-        if ( nowLeft == Val.dragPadding ) {//左边，执行上一页
+        if ( nowLeft == u.params.dragPadding ) {//左边，执行上一页
             //已经拉到了最左边
             Val.dragMaxL = true;
-            $("#pA").text("已经拉到了最左边，再向左边会翻页");
         }else{
             Val.dragMaxL = false;
         }
 
-        if ( nowLeft == (Val.containerW - Dom.$nowImg.width() - Val.dragPadding) ) {//右边，执行下一页
+        if ( nowLeft == (Val.containerW - Dom.$nowImg.width() - u.params.dragPadding) ) {//右边，执行下一页
             //已经拉到了最右边
             Val.dragMaxR = true;
-            $("#pA").text("已经拉到了最右边,再向右边边会翻页");
         }else{
             Val.dragMaxR = false;
         }
@@ -417,12 +414,20 @@
             'transition':'all '+ time/1000 +'s'
         });
 
+        if (index == Dom.activeIndex) {
+            return
+        }
+
         //还原最左/右边的值
         Val.dragMaxL = false;
         Val.dragMaxR = false;
 
+        //恢复原来图片的大小
+        u.makeImgShowBast(Dom.$nowImg,300);
         //更新图片操作当前对象
         Dom.$nowImg = Dom.$slides.eq(index).find('img');
+        //更新当前active的值
+        Dom.activeIndex = index;
         //添加类
         Dom.$slides.eq(index).addClass(u.params.slideActiveClass).siblings().removeClass(u.params.slideActiveClass); 
         Dom.$slides.eq(u.getNextIndex(index)).addClass(u.params.slideNextClass).siblings().removeClass(u.params.slideNextClass); 
@@ -506,6 +511,8 @@
                 });
             })($popImg.eq(i))
         }
+
+        console.log('layout');
     }
 
     //移除所有事件
@@ -529,11 +536,11 @@
             Val = this.val;
 
         //移除大图拖拽
-        Dom.$container[0].removeEventListener('touchmove',o.imgDragMove,false);
-        Dom.$container[0].removeEventListener('touchend',o.imgDragEnd,false);
+        Dom.$container[0].removeEventListener('touchmove',u.imgDragMove,false);
+        Dom.$container[0].removeEventListener('touchend',u.imgDragEnd,false);
         //添加翻页
-        Dom.$container[0].addEventListener('touchmove',o.swiperMove,false);
-        Dom.$container[0].addEventListener('touchend',o.swiperEnd,false);
+        Dom.$container[0].addEventListener('touchmove',u.swiperMove,false);
+        Dom.$container[0].addEventListener('touchend',u.swiperEnd,false);
     }
 
     window.zoomUncle = zoomUncle;
